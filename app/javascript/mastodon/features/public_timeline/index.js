@@ -5,7 +5,8 @@ import StatusListContainer from '../ui/containers/status_list_container';
 import Column from '../../components/column';
 import ColumnHeader from '../../components/column_header';
 import {
-  refreshTimeline,
+  refreshPublicTimeline,
+  expandPublicTimeline,
   updateTimeline,
   deleteFromTimelines,
   connectTimeline,
@@ -13,7 +14,6 @@ import {
 } from '../../actions/timelines';
 import { addColumn, removeColumn, moveColumn } from '../../actions/columns';
 import { defineMessages, injectIntl, FormattedMessage } from 'react-intl';
-import ColumnBackButtonSlim from '../../components/column_back_button_slim';
 import ColumnSettingsContainer from './containers/column_settings_container';
 import createStream from '../../stream';
 
@@ -27,7 +27,9 @@ const mapStateToProps = state => ({
   accessToken: state.getIn(['meta', 'access_token']),
 });
 
-class PublicTimeline extends React.PureComponent {
+@connect(mapStateToProps)
+@injectIntl
+export default class PublicTimeline extends React.PureComponent {
 
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
@@ -61,7 +63,7 @@ class PublicTimeline extends React.PureComponent {
   componentDidMount () {
     const { dispatch, streamingAPIBaseURL, accessToken } = this.props;
 
-    dispatch(refreshTimeline('public'));
+    dispatch(refreshPublicTimeline());
 
     if (typeof this._subscription !== 'undefined') {
       return;
@@ -106,6 +108,10 @@ class PublicTimeline extends React.PureComponent {
     this.column = c;
   }
 
+  handleLoadMore = () => {
+    this.props.dispatch(expandPublicTimeline());
+  }
+
   render () {
     const { intl, columnId, hasUnread, multiColumn } = this.props;
     const pinned = !!columnId;
@@ -126,8 +132,8 @@ class PublicTimeline extends React.PureComponent {
         </ColumnHeader>
 
         <StatusListContainer
-          {...this.props}
-          type='public'
+          timelineId='public'
+          loadMore={this.handleLoadMore}
           trackScroll={!pinned}
           scrollKey={`public_timeline-${columnId}`}
           emptyMessage={<FormattedMessage id='empty_column.public' defaultMessage='There is nothing here! Write something publicly, or manually follow users from other instances to fill it up' />}
@@ -137,5 +143,3 @@ class PublicTimeline extends React.PureComponent {
   }
 
 }
-
-export default connect(mapStateToProps)(injectIntl(PublicTimeline));

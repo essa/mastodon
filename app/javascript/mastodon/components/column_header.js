@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FormattedMessage } from 'react-intl';
 
-class ColumnHeader extends React.PureComponent {
+export default class ColumnHeader extends React.PureComponent {
 
   static contextTypes = {
     router: PropTypes.object,
@@ -45,8 +45,8 @@ class ColumnHeader extends React.PureComponent {
   }
 
   handleBackClick = () => {
-    if (window.history && window.history.length === 1) this.context.router.push('/');
-    else this.context.router.goBack();
+    if (window.history && window.history.length === 1) this.context.router.history.push('/');
+    else this.context.router.history.goBack();
   }
 
   handleTransitionEnd = () => {
@@ -56,6 +56,10 @@ class ColumnHeader extends React.PureComponent {
   render () {
     const { title, icon, active, children, pinned, onPin, multiColumn, showBackButton } = this.props;
     const { collapsed, animating } = this.state;
+
+    const wrapperClassName = classNames('column-header__wrapper', {
+      'active': active,
+    });
 
     const buttonClassName = classNames('column-header', {
       'active': active,
@@ -116,7 +120,7 @@ class ColumnHeader extends React.PureComponent {
     }
 
     return (
-      <div>
+      <div className={wrapperClassName}>
         <div role='button heading' tabIndex='0' className={buttonClassName} onClick={this.handleTitleClick}>
           <i className={`fa fa-fw fa-${icon} column-header__icon`} />
           {title}
@@ -128,7 +132,7 @@ class ColumnHeader extends React.PureComponent {
         </div>
 
         <div className={collapsibleClassName} onTransitionEnd={this.handleTransitionEnd}>
-          <div>
+          <div className='column-header__collapsible-inner'>
             {(!collapsed || animating) && collapsedContent}
           </div>
         </div>
@@ -137,5 +141,3 @@ class ColumnHeader extends React.PureComponent {
   }
 
 }
-
-export default ColumnHeader;
