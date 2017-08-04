@@ -6,21 +6,21 @@
 web_base: &web_base
   service_type: web
   force_ssl: true
-  cpu: 256
+  cpu: 128
   memory: 256
 
 worker_base: &worker_base
-  cpu: 128
+  cpu: 64
   memory: 256
 
 environments:
   production:
     name: bcn-users
     image_name: 822761295011.dkr.ecr.ap-northeast-1.amazonaws.com/mstdn-bcn-users-mastodon
-    before_deploy: rake db:migrate
-    scheduled_tasks:
-      - schedule: cron(15 20 ? * * *)
-        command: rake mastodon:daily
+    before_deploy: rake mastodon:maintenance:prepare_for_foreign_keys db:migrate
+    #scheduled_tasks:
+    #  - schedule: cron(15 20 ? * * *)
+    #    command: rake mastodon:daily
     services:
       - <<: *web_base
         name: web
@@ -38,7 +38,7 @@ environments:
           - endpoint: mstdn
             rule_conditions:
               - type: path-pattern
-                value: //api/v1/streaming/*
+                value: /api/v1/streaming/*
             health_check_path: /api/v1/streaming/health_check
             rule_priority: 10
       - <<: *worker_base

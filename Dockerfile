@@ -54,7 +54,7 @@ COPY docker_entrypoint.sh /usr/local/bin/run
 
 RUN chmod +x /usr/local/bin/run
 
-RUN SECRET_KEY_BASE=0123456789 rake assets:precompile webpacker:compile
+RUN SMTP_FROM_ADDRESS=tnakajima@degica.com SECRET_KEY_BASE=0123456789 rake assets:precompile webpacker:compile
 
 VOLUME /mastodon/public/system /mastodon/public/assets /mastodon/public/packs
 
