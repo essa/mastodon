@@ -17,7 +17,8 @@ environments:
   production:
     name: bcn-users
     image_name: 822761295011.dkr.ecr.ap-northeast-1.amazonaws.com/mstdn-bcn-users-mastodon
-    before_deploy: rake mastodon:maintenance:prepare_for_foreign_keys db:migrate
+    #before_deploy: rake mastodon:maintenance:prepare_for_foreign_keys db:migrate
+    before_deploy: rake db:migrate
     #scheduled_tasks:
     #  - schedule: cron(15 20 ? * * *)
     #    command: rake mastodon:daily

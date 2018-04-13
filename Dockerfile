@@ -77,7 +77,9 @@ COPY . /mastodon
 
 RUN chown -R mastodon:mastodon /mastodon
 
-RUN SMTP_FROM_ADDRESS=tnakajima@degica.com SECRET_KEY_BASE=0123456789 rake assets:precompile webpacker:compile
+RUN SMTP_FROM_ADDRESS=tnakajima@degica.com SECRET_KEY_BASE=0123456789 OTP_SECRET=0123456789 rake assets:precompile webpacker:compile
+
+RUN chmod -R 777 /mastodon/tmp
 
 VOLUME /mastodon/public/system /mastodon/public/assets /mastodon/public/packs
 
